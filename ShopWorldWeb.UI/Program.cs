@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using ShopWorldWeb.UI.Models.Profiles;
 using ShopWorldWeb.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<HttpClientService>();
 builder.Services.AddSingleton<ShopWorldClient>();
+builder.Services.AddAutoMapper(typeof(CustomerProfiler));
+builder.Services.AddAutoMapper(typeof(ItemProfiler));
+builder.Services.AddAutoMapper(typeof(OrderProfiler));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
