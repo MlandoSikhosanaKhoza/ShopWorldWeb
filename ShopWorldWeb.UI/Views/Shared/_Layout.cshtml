@@ -1,0 +1,91 @@
+﻿@using BusinessEntities
+@{
+    Layout = "~/Views/Shared/_DefaultLayout.cshtml";
+    string user=Context.Request.Cookies["user"];
+    string admin=Context.Request.Cookies["admin"];
+}
+@section CSS{
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="~/css/profile/aos.css" rel="stylesheet" />
+    <link href="~/css/profile/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/profile/bootstrap-icons.css" rel="stylesheet" />
+    <link href="~/css/profile/boxicons/css/boxicons.min.css" rel="stylesheet" />
+    <link href="~/css/profile/glightbox/glightbox.min.css" rel="stylesheet" />
+    <link href="~/css/profile/swiper/swiper-bundle.min.css" rel="stylesheet" />
+    <link href="~/css/profile/datatables/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <!-- Template Main CSS File -->
+    <link href="~/css/profile/style.css" rel="stylesheet" />
+    <style>
+        #main {
+            background: url('/image/front/hero-bg.jpg') center;
+            padding: 16px;
+            min-height: 100vh;
+        }
+    </style>
+    @RenderSection("css", required: false)
+}
+<!-- ======= Mobile nav toggle button ======= -->
+<i class="bi bi-list mobile-nav-toggle d-xl-none"></i>
+
+<!-- ======= Header ======= -->
+<header id="header">
+    <div class="d-flex flex-column">
+
+        <div class="profile">
+            <img src="~/image/profile/cow.png" alt="" class="img-fluid">
+            <h1 class="text-light">Good-for-moo</h1>
+            <h6 id="username-sidebar" class="text-light text-center">@ViewBag.NameSurname</h6>
+        </div>
+
+        <nav id="navbar" class="nav-menu navbar">
+            <ul>
+                @if (!string.IsNullOrEmpty(user))
+                {
+                    <li><a href="@Url.Action("Index","Customer")" class="nav-link scrollto"><i class="bx bx-home"></i> <span>Make An Order</span></a></li>
+                    <li><a href="@Url.Action("MyOrders","Customer")" class="nav-link scrollto"><i class="bx bi-cart-x"></i> <span>My Orders</span></a></li>
+                    <li><a href="@Url.Action("Logout","Customer")" class="nav-link scrollto"><i class="bx bx-user"></i> <span>Logout</span></a></li>
+                }
+
+                @if (!string.IsNullOrEmpty(admin))
+                {
+                    <li><a href="@Url.Action("Index","Item")" class="nav-link scrollto"><i class="bx bx-file-blank"></i> <span>Items</span></a></li>
+                    <li><a href="@Url.Action("Index","Employee")" class="nav-link scrollto"><i class="bx bx-book-content"></i> <span>Employees</span></a></li>
+                    <li><a href="@Url.Action("Index","OrderStats")" class="nav-link scrollto"><i class="bx bi-cart-check"></i> <span>Order Stats</span></a></li>
+                    <li><a href="@Url.Action("Index","Order")" class="nav-link scrollto"><i class="bx bi-cart-fill"></i> <span>Orders</span></a></li>
+                    <li><a href="@Url.Action("Logout","Employee")" class="nav-link scrollto"><i class="bx bx-user"></i> <span>Logout</span></a></li>
+                }
+
+            </ul>
+        </nav><!-- .nav-menu -->
+    </div>
+</header><!-- End Header -->
+<main id="main">
+    @RenderBody()
+</main>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+@section Scripts{
+    <!-- Vendor JS Files -->
+    <script src="~/js/profile/purecounter/purecounter.js"></script>
+    <script src="~/js/profile/aos/aos.js"></script>
+    <script src="~/js/profile/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="~/js/profile/glightbox/glightbox.min.js"></script>
+    <script src="~/js/profile/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="~/js/profile/swiper/swiper-bundle.min.js"></script>
+    <script src="~/js/profile/typed.js/typed.min.js"></script>
+    <script src="~/js/profile/waypoints/noframework.waypoints.js"></script>
+    <script src="~/js/profile/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/js/profile/datatables/dataTables.bootstrap5.min.js"></script>
+    <!-- Template Main JS File -->
+    <script src="~/js/profile/main.js"></script>
+    @RenderSection("scripts", required: false)
+}

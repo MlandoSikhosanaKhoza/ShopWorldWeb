@@ -1,0 +1,79 @@
+﻿@using BusinessEntities
+@{ 
+    List<Order> OngoingOrders = ViewBag.OngoingOrders;
+    List<Order> CompleteOrders = ViewBag.CompleteOrders;
+}
+<section class="contact p-3 pt-0 bg-white">
+    <div class="section-title">
+        <h2>Ongoing Orders</h2>
+        <table id="ongoing-orders" class="table">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Order Date</th>
+                    <th>VAT</th>
+                    <th>Subtotal</th>
+                    <th>Grand Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in OngoingOrders)
+                {
+                    <tr>
+                        <td>@order.Customer.Name @order.Customer.Surname</td>
+                        <td>@order.DateCreated</td>
+                        <td>@(BusinessEntities.Enums.Tax.VAT)</td>
+                        <td>@order.Subtotal</td>
+                        <td>@order.GrandTotal</td>
+                        <td><a href="@Url.Action("Edit","Order",new { id=order.OrderId })">Fulfill Order</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<section class="contact p-3 pt-0 bg-white">
+    <div class="section-title">
+        <h2>Complete Orders</h2>
+        <table id="complete-orders" class="table">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Order Date</th>
+                    <th>VAT</th>
+                    <th>Subtotal</th>
+                    <th>Grand Total</th>
+                    <th>Fulfilled by</th>
+                    <th>Date Fulfilled</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in CompleteOrders)
+                {
+                    <tr>
+                        <td>@order.Customer.Name @order.Customer.Surname</td>
+                        <td>@order.DateCreated</td>
+                        <td>@(BusinessEntities.Enums.Tax.VAT)</td>
+                        <td>@order.Subtotal</td>
+                        <td>@order.GrandTotal</td>
+                        <td>@order.Employee.Name @order.Employee.Surname</td>
+                        <td>@order.DateFulfilled</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+@section Scripts{ 
+<script>
+    var MyOrders = {
+        OngoingOrderTable: undefined,
+        CompleteOrdersTable: undefined
+    };
+    $(function () {
+        MyOrders.OngoingOrderTable = $("#ongoing-orders").DataTable();
+        MyOrders.CompleteOrdersTable = $("#complete-orders").DataTable();
+    });
+</script>
+}

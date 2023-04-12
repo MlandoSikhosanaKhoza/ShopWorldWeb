@@ -1,0 +1,94 @@
+﻿@using BusinessEntities.Models
+@{
+    List<CustomerOrderView> customerOrderViews = ViewBag.CustomerNumOrdersList;
+    List<CustomerOrderPriceView> customerOrderPriceViews = ViewBag.CustomerTotalSpentList;
+    List<CustomerOrderPriceView> customerOrderAvgViews = ViewBag.CustomerAverageSpentList;
+}
+<section class="contact p-3 pt-0 mb-3 bg-white">
+    <div class="section-title">
+        <h2>Total orders by each customer</h2>
+        <table id="num-of-order-table" class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Mobile</th>
+                    <th>Number of Orders</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in customerOrderViews)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Surname</td>
+                        <td>@item.Mobile</td>
+                        <td>@item.NumOfOrders</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        
+    </div>
+</section>
+<section class="contact p-3 pt-0 mb-3 bg-white">
+    <div class="section-title">
+        <h2>Total amount spent by each customer</h2>
+        <table id="order-price-table" class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Mobile</th>
+                    <th>Total Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in customerOrderPriceViews)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Surname</td>
+                        <td>@item.Mobile</td>
+                        <td>@item.Price</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<section class="contact p-3 pt-0 mb-3 bg-white">
+    <div class="section-title">
+        <h2>Average amount spent by each customer</h2>
+        <table id="order-amt-table" class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Mobile</th>
+                    <th>Total Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in customerOrderAvgViews)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Surname</td>
+                        <td>@item.Mobile</td>
+                        <td>@item.Price</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+@section Scripts{ 
+    <script>
+        $(function () {
+            $("#num-of-order-table").DataTable();
+            $("#order-price-table").DataTable();
+            $("#order-amt-table").DataTable();
+        });
+    </script>
+}

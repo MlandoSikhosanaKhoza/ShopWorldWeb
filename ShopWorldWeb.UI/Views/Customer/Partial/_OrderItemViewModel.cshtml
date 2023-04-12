@@ -1,0 +1,64 @@
+﻿@model IEnumerable<UI.Models.OrderItemsViewModel>
+    
+    <div class="bg-dark p-0 text-white">
+        <span id="btn-close-shopping-cart" class="ml-auto" style="margin-right: 0;cursor: pointer;">&times;</span>
+        <h3>Shopping Cart</h3>
+    </div>
+
+<table id="my-orders" class="table small">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.ActionLink("Delete", "Delete", new { id=item.ItemId })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<table class="col-sm-12 table bg-dark text-white">
+    <tr>
+        <th>Subtotal</th>
+        <th>VAT</th>
+        <th>Grand Total</th>
+    </tr>
+    <tr>
+        <td id="sub-total">
+            R0,00
+        </td>
+        <td id="purchase-vat">
+            @(BusinessEntities.Enums.Tax.VAT*100)%
+            <input type="hidden" value="@BusinessEntities.Enums.Tax.VAT" id="input-vat" />
+        </td>
+        <td id="grand-total">
+            R0,00
+        </td>
+    </tr>
+</table>
+<div id="cart-storage"></div>
+<div class="justify-content-end">
+    <button id="btn-cms" disabled class="btn btn-primary pull-right">Confirm your order</button>
+</div>

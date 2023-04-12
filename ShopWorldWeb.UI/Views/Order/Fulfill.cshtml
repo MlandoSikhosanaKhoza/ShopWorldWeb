@@ -1,0 +1,60 @@
+﻿@model UI.Models.OrderModel
+@{
+}
+<section class="contact p-3 pt-0 bg-white">
+    <div class="section-title">
+        <h2>My Reciept</h2>
+    </div>
+    <div>
+        <form asp-action="FulfillOrder" method="post">
+            <input type="hidden" name="OrderId" value="@Model.OrderId"/>
+            <table class="table">
+                <tr>
+                    <th>Customer name</th>
+                    <td colspan="3">@Model.Customer.Name @Model.Customer.Surname</td>
+                </tr>
+                <tr>
+                    <th>Order number reference</th>
+                    <td colspan="3">@Model.OrderReference</td>
+                </tr>
+                <tr>
+                    <th>Date Ordered</th>
+                    <td colspan="3">@Model.DateCreated</td>
+                </tr>
+                <tr>
+                    <th>Order fullfiled by</th>
+                    <td colspan="3" class="text-danger">This is a dropdown<br/>@Html.DropDownList("EmployeeId", null, htmlAttributes: new { @class = "form-control" })</td>
+                </tr>
+                <tr>
+                    <th>VAT</th>
+                    <td colspan="3">@(BusinessEntities.Enums.Tax.VAT*100)%</td>
+                </tr>
+                <tr>
+                    <th>Subtotal</th>
+                    <td colspan="3">@Model.Subtotal</td>
+                </tr>
+                <tr>
+                    <th>Grand Total</th>
+                    <td colspan="3">@Model.GrandTotal</td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Unit Cost</th>
+                    <th>Total Amount</th>
+                </tr>
+                @foreach (var item in Model.OrderItemsView)
+                {
+                    <tr>
+                        <td>@item.Description</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Price</td>
+                        <td>@(item.Price*item.Quantity)</td>
+                    </tr>
+                }
+            </table>
+            <button class="btn btn-primary">Complete Order</button>
+        </form>
+        
+    </div>
+</section>

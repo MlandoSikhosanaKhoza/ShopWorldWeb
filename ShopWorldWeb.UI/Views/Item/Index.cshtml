@@ -1,0 +1,62 @@
+﻿@model IEnumerable<BusinessEntities.Item>
+
+@{
+    ViewBag.Title = "Items";
+}
+<section  class="contact p-3 pt-0 mb-3 bg-white">
+    <div class="section-title">
+        <h2>Items</h2>
+        
+            @Html.ActionLink("Create New", "Create","Item",null, new { @class = "btn btn-primary mb-3" })
+        
+        <table id="item-table" class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ImageName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Description)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Price)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="~/image/item-image/@item.ImageName?random=@Guid.NewGuid().ToString()" style="max-width: 120px;max-height: 120px;" />
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Price)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.ItemId }) |
+                            @Html.ActionLink("Delete", "Delete", new { id = item.ItemId })
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    </div>
+
+    
+
+</section>
+@section Scripts{ 
+    <script>
+        $(function () {
+            $('#item-table').DataTable();
+        });
+    </script>
+}

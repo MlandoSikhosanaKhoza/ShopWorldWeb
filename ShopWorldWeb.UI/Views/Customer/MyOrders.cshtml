@@ -1,0 +1,101 @@
+﻿@using BusinessEntities
+@model CustomerHistoryModel
+
+@if (Model.CustomerId == 0)
+{
+}
+else
+{
+    <section class="contact p-3 pt-0 bg-white">
+        <div class="section-title">
+            <h2>My Orders</h2>
+        </div>
+        <div>
+                <ul class="nav nav-pills mb-4">
+                    <li class="active"><a href="#ongoing" class="m-3 p-2 btn-for-order">Ongoing</a></li>
+                    <li><a href="#complete" class="m-3 p-2 btn-for-order">Complete</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div id="ongoing" class="tab-pane fade active">
+                        <table id="ongoing-orders" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order Ref.</th>
+                                    <th>Order Date</th>
+                                    <th>VAT</th>
+                                    <th>Subtotal</th>
+                                    <th>Grand Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in Model.OngoingOrders)
+                                {
+                                    <tr>
+                                        <td>@order.OrderReference</td>
+                                        <td>@order.DateCreated</td>
+                                        <td>@(BusinessEntities.Enums.Tax.VAT)</td>
+                                        <td>@order.Subtotal</td>
+                                        <td>@order.GrandTotal</td>
+                                        <td><a href="@Url.Action("ShowReceipt","Customer",new { id=order.OrderId })">Show Receipt</a></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="complete" class="tab-pane fade">
+                        <table id="complete-orders" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order Ref.</th>
+                                    <th>Order Date</th>
+                                    <th>VAT</th>
+                                    <th>Subtotal</th>
+                                    <th>Grand Total</th>
+                                    <th>Fulfilled by</th>
+                                    <th>Date Fulfilled</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in Model.CompleteOrders)
+                                {
+                                    <tr>
+                                        <td>@order.OrderReference</td>
+                                        <td>@order.DateCreated</td>
+                                        <td>@(BusinessEntities.Enums.Tax.VAT)</td>
+                                        <td>@order.Subtotal</td>
+                                        <td>@order.GrandTotal</td>
+                                        <td>@order.Employee.Name @order.Employee.Surname</td>
+                                        <td>@order.DateFulfilled</td>
+                                        <td><a href="@Url.Action("ShowReceipt","Customer",new { id=order.OrderId })">Show Receipt</a></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        </div>
+    </section>
+    @section Scripts{
+        <script>
+            var MyOrders = {
+                OngoingOrderTable: undefined,
+                CompleteOrdersTable: undefined
+            };
+            $(document).ready(function () {
+
+                $(".nav-pills a").click(function () {
+                    $(this).tab('show');
+                    $(".btn-for-order").removeClass("btn-primary");
+                    $(this).addClass("btn-primary");
+                });
+
+                MyOrders.OngoingOrderTable = $("#ongoing-orders").DataTable();
+                MyOrders.CompleteOrdersTable = $("#complete-orders").DataTable();
+            });
+        </script>
+    }
+}
+

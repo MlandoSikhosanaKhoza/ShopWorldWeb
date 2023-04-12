@@ -1,0 +1,82 @@
+﻿@model UI.Models.ItemModel
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<!-- ======= Contact Section ======= -->
+<section id="contact" class="contact bg-white">
+    <div class="container">
+
+        <div class="section-title">
+            <h2>Create</h2>
+        </div>
+
+        @using (Html.BeginForm(FormMethod.Post,new { @class="row" }))
+        {
+            @Html.AntiForgeryToken()
+
+                <h4>Item</h4>
+                <div class="col-md-4">
+                    <img id="display-image" src="" style="width: auto;max-width: 100%; max-height: 300px;" />
+                    <input id="file-image" accept="image/*" type="file" />
+                    @Html.HiddenFor(model => model.Base64)
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-8 row">
+                    <div class="form-group col-md-6 d-none">
+                        @Html.LabelFor(model => model.ImageName, htmlAttributes: new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.ImageName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ImageName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                
+                
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="submit" value="Create" class="btn btn-primary mt-3 float-right" />
+                    </div>
+                </div>
+        }
+        <div>
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    </div>
+</section><!-- End Contact Section -->
+
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#file-image").change(function () {
+                var fr = new FileReader();
+                var file = this.files[0]
+                fr.onloadend = function () {
+                    $("#ImageName").val(file.name);
+                    $("#display-image").attr("src", fr.result);
+                    $("#Base64").val(fr.result.split(",")[1]);
+                };
+                fr.readAsDataURL(file);
+            })
+        })
+    </script>
+}

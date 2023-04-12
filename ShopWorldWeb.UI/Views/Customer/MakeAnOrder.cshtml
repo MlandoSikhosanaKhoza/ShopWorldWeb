@@ -1,0 +1,206 @@
+﻿@model UI.Models.OrderModel
+@{
+    ViewData["Title"] = "Make An Order";
+    string user = Context.Request.Cookies["user"];
+}
+@section CSS{
+    <style>
+        #heading {
+            width: 100%;
+            height: 10vh;
+            background-size: cover;
+        }
+
+            #heading h1 {
+                margin: 40px 0 0 0;
+                font-weight: 700;
+                line-height: 56px;
+                color: #fff;
+            }
+
+            #heading p {
+                color: #fff;
+                margin-bottom: 50px;
+                font-size: 26px;
+                font-family: "Poppins", sans-serif;
+            }
+
+                #heading p span {
+                    color: #fff;
+                    padding-bottom: 4px;
+                    letter-spacing: 1px;
+                    border-bottom: 3px solid #149ddd;
+                }
+    </style>
+}
+
+    <section id="heading" class="d-flex flex-column justify-content-center align-items-center">
+        <div class="hero-container" data-aos="fade-in">
+            <h1>Make an order</h1>
+            <p>Just <span class="typed" data-typed-items="Buy, Use, Mooooove out"></span></p>
+
+        </div>
+    </section>
+    <form asp-action="PurchaseItems" method="post">
+        <!-- ======= Contact Section ======= -->
+        <section id="contact" class="contact p-3 pt-0 mb-3 bg-white @(user.Equals("new-customer")?"":"d-none")">
+            <div class="section-title">
+                <h2>My Details</h2>
+                <partial name="Partial/_CustomerModel" model="Model.Customer" />
+            </div>
+        </section>
+        <section class="contact p-3 pt-0 bg-white">
+            <div class="section-title">
+                <h2>My Order</h2>
+                <div class="row mt-3" style="margin-right: 12px;">
+                    <button id="btn-shopping-cart" type="button" class="btn btn-dark" style="position: fixed;bottom: 15px;right: 100px;width:auto;z-index: 99;"><i class="bx bi-bag-x-fill"></i> Shopping cart <span id="shop-quantity" class="badge text-black bg-white">0</span></button>
+                    <div id="shopping-cart" style="position: fixed; bottom: 16px;right: 16px;width: 45%;z-index: 100;" class="bg-white border w3-card-4 d-none">
+                        <partial name="Partial/_OrderItemViewModel" model="new List<OrderItemsViewModel>()" />
+                    </div>
+
+                    <div class="col-md-12">
+                        <partial name="Partial/_ItemModel" model="Model.Items" />
+                    </div>
+                    @Html.HiddenFor(model=>model.GrandTotal)
+                    @Html.HiddenFor(model=>model.Subtotal)
+                    @Html.HiddenFor(model=>model.DateCreated)
+                    @Html.HiddenFor(model=>model.OrderReference)
+                </div>
+            </div>
+        </section>
+        <!-- End Contact Section -->
+    </form>
+@section Scripts{ 
+    <script>
+        function Item(itemId, name, quantity, price) {
+            var _THIS = this;
+            this.name = name;
+            this.itemId = itemId;
+            this.quantity = quantity;
+            this.price = parseFloat(price.replace(",", "."));
+            this.increaseQuantity=function() {
+                _THIS.quantity++;
+            };
+            this.decreaseQuantity = function () {
+                _THIS.quantity--;
+            };
+            this.getDecimalPrice = function () {
+                return `${_THIS.price}`.replace(".", ",");
+            };
+            this.getRow = function () {
+                return [name, `<input type="number" class="form-control dt-spinner" onchange="MakeAnOrder.ChangedSpinner()" min="1" data-item-id="${_THIS.itemId}" id="item-${_THIS.itemId}" value="${_THIS.quantity}"/>`, price, `<button data-item-id="${_THIS.itemId}" onclick="MakeAnOrder.Delete()" class="btn btn-primary">Delete</button>`];
+            };
+        }
+        var MakeAnOrder = {
+            Cart: [],
+            CartTable: undefined,
+            ChangedSpinner() {
+                var itemId = $(event.target).data("itemId");
+                let ItemObject = MakeAnOrder.GetItemBy(itemId);
+                ItemObject.quantity = parseInt(event.target.value);
+                MakeAnOrder.CalculateTotal();
+                MakeAnOrder.ProduceStorage();
+            },
+            Buy() {
+                document.getElementById("btn-cms").disabled = false;
+                var itemId = $(event.target).data("itemId");
+                if (this.CheckIfItemExists(itemId)) {
+                    let ItemObject = MakeAnOrder.GetItemBy(itemId);
+                    ItemObject.increaseQuantity();
+                    $("#item-" + ItemObject.itemId).val(ItemObject.quantity);
+                    MakeAnOrder.CalculateTotal();
+                    MakeAnOrder.ProduceStorage();
+                } else {
+                    let description = $(event.target).data("desc");
+                    let price = $(event.target).data("price");
+                    let ItemObject = new Item(itemId, description, 1, price);
+                    MakeAnOrder.Cart.push(ItemObject);
+                    console.log(ItemObject.getRow());
+                    MakeAnOrder.CartTable.row.add(ItemObject.getRow()).draw(false);
+                    MakeAnOrder.CalculateTotal();
+                    MakeAnOrder.ProduceStorage();
+                }
+            },
+            CheckIfItemExists(itemId) {
+                for (var i = 0; i < this.Cart.length; i++) {
+                    if (this.Cart[i].itemId == itemId) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            GetItemBy(itemId) {
+                for (var i = 0; i < this.Cart.length; i++) {
+                    if (this.Cart[i].itemId == itemId) {
+                        return this.Cart[i];
+                    }
+                }
+                return undefined;
+            },
+            CalculateTotal() {
+                var subtotal = 0;
+                var total = 0;
+                var vat = parseFloat($("#input-vat").val().replace(",", ".")) + 1;
+                var quantity = 0;
+                for (var i = 0; i < this.Cart.length; i++) {
+                    subtotal += this.Cart[i].quantity * this.Cart[i].price;
+                    quantity += this.Cart[i].quantity;
+                }
+                total = subtotal * vat;
+                $("#sub-total").text("R " + subtotal.toFixed(2));
+                $("#Subtotal").val(subtotal.toFixed(2).replace(".",","));
+                $("#GrandTotal").val(total.toFixed(2).replace(".", ","));
+                $("#grand-total").text("R " + total.toFixed(2));
+                $("#shop-quantity").text(quantity);
+            },
+            ProduceStorage() {
+                var html = "";
+                for (var i = 0; i < this.Cart.length; i++) {
+                    html += `<input type="hidden" name="ItemId" value="${this.Cart[i].itemId}"/>`;
+                    html += `<input type="hidden" name="Quantity" value="${this.Cart[i].quantity}"/>`;
+                    html += `<input type="hidden" name="Price" value="${this.Cart[i].getDecimalPrice()}"/>`;
+                }
+                $("#cart-storage").html(html);
+            },
+            Delete() {
+                var itemId = $(event.target).data("itemId");
+                for (let i = 0; i < this.Cart.length; i++) {
+                    if (this.Cart[i].itemId == itemId) {
+                        this.Cart.splice(i, 1);
+                    }
+                }
+                console.log(event.target.parentElement.parentElement);
+                this.CartTable.row(event.target.parentElement.parentElement).remove().draw(false);
+                if (this.Cart.length == 0) {
+                    document.getElementById("btn-cms").disabled = true;
+                }
+                this.CalculateTotal();
+            }
+        };
+        $(function () {
+            $('#item-table').DataTable();
+            MakeAnOrder.CartTable = $("#my-orders").DataTable({
+                "lengthMenu": [[2,10, 25, 50, -1], [2,10, 25, 50, "All"]]
+            });
+            $("#my-orders").on("draw.dt", function () {
+                var spinners = document.getElementsByClassName("dt-spinner");
+                for (var i = 0; i < MakeAnOrder.Cart.length; i++) {
+                    for (var j = 0; j < spinners.length; j++) {
+                        if (MakeAnOrder.Cart[i].itemId == $(spinners[j]).data("itemId")) {
+                            spinners[j].value = MakeAnOrder.Cart[i].quantity;
+                        }
+                    }
+                }
+            });
+            $("#btn-shopping-cart").click(function () {
+                $("#shopping-cart").toggleClass("d-none");
+            });
+            $("#btn-close-shopping-cart").click(function () {
+                $("#shopping-cart").toggleClass("d-none");
+            });
+            $(".customer-input").focus(function () {
+                $("#shopping-cart").addClass("d-none");
+            });
+        });
+    </script>
+}
