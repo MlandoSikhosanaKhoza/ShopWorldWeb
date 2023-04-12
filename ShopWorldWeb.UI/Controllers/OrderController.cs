@@ -10,7 +10,7 @@ namespace ShopWorldWeb.UI.Controllers
     public class OrderController : Controller
     {
         private ShopWorldClient _shopWorldClient;
-        public IMapper _mapper { get; set; }
+        private IMapper _mapper { get; set; }
         public OrderController(ShopWorldClient shopWorldClient, IMapper mapper)
         {
             _shopWorldClient = shopWorldClient;

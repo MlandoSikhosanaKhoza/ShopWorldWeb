@@ -18,7 +18,7 @@ namespace ShopWorldWeb.UI.Controllers
     public class CustomerController : Controller
     {
         private ShopWorldClient _shopWorldClient;
-        public IMapper _mapper { get; set; }
+        private IMapper _mapper { get; set; }
         public CustomerController(ShopWorldClient shopWorldClient,IMapper mapper) { 
             _shopWorldClient= shopWorldClient;
             _mapper=mapper;
