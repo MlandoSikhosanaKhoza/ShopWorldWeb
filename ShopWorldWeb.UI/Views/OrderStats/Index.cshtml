@@ -1,8 +1,7 @@
-﻿@using BusinessEntities.Models
-@{
-    List<CustomerOrderView> customerOrderViews = ViewBag.CustomerNumOrdersList;
-    List<CustomerOrderPriceView> customerOrderPriceViews = ViewBag.CustomerTotalSpentList;
-    List<CustomerOrderPriceView> customerOrderAvgViews = ViewBag.CustomerAverageSpentList;
+﻿@{
+    List<CustomerOrderResult> customerOrderViews = ViewBag.CustomerNumOrdersList;
+    List<CustomerOrderPriceResult> customerOrderPriceViews = ViewBag.CustomerTotalSpentList;
+    List<CustomerOrderPriceResult> customerOrderAvgViews = ViewBag.CustomerAverageSpentList;
 }
 <section class="contact p-3 pt-0 mb-3 bg-white">
     <div class="section-title">

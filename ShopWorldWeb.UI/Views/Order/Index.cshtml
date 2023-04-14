@@ -1,5 +1,4 @@
-﻿@using BusinessEntities
-@{ 
+﻿@{ 
     List<Order> OngoingOrders = ViewBag.OngoingOrders;
     List<Order> CompleteOrders = ViewBag.CompleteOrders;
 }
@@ -23,7 +22,7 @@
                     <tr>
                         <td>@order.Customer.Name @order.Customer.Surname</td>
                         <td>@order.DateCreated</td>
-                        <td>@(BusinessEntities.Enums.Tax.VAT)</td>
+                        <td>@(Tax.VAT)</td>
                         <td>@order.Subtotal</td>
                         <td>@order.GrandTotal</td>
                         <td><a href="@Url.Action("Edit","Order",new { id=order.OrderId })">Fulfill Order</a></td>
@@ -54,7 +53,7 @@
                     <tr>
                         <td>@order.Customer.Name @order.Customer.Surname</td>
                         <td>@order.DateCreated</td>
-                        <td>@(BusinessEntities.Enums.Tax.VAT)</td>
+                        <td>@(Tax.VAT)</td>
                         <td>@order.Subtotal</td>
                         <td>@order.GrandTotal</td>
                         <td>@order.Employee.Name @order.Employee.Surname</td>

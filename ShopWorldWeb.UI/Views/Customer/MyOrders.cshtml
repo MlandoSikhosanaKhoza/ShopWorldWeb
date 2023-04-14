@@ -1,5 +1,4 @@
-﻿@using BusinessEntities
-@model CustomerHistoryModel
+﻿@model CustomerHistoryModel
 
 @if (Model.CustomerId == 0)
 {
@@ -35,7 +34,7 @@ else
                                     <tr>
                                         <td>@order.OrderReference</td>
                                         <td>@order.DateCreated</td>
-                                        <td>@(BusinessEntities.Enums.Tax.VAT)</td>
+                                        <td>@(ShopWorld.Shared.Tax.VAT)</td>
                                         <td>@order.Subtotal</td>
                                         <td>@order.GrandTotal</td>
                                         <td><a href="@Url.Action("ShowReceipt","Customer",new { id=order.OrderId })">Show Receipt</a></td>
@@ -64,7 +63,7 @@ else
                                     <tr>
                                         <td>@order.OrderReference</td>
                                         <td>@order.DateCreated</td>
-                                        <td>@(BusinessEntities.Enums.Tax.VAT)</td>
+                                        <td>@(ShopWorld.Shared.Tax.VAT)</td>
                                         <td>@order.Subtotal</td>
                                         <td>@order.GrandTotal</td>
                                         <td>@order.Employee.Name @order.Employee.Surname</td>

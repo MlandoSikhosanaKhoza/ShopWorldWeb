@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ShopWorld.Shared;
 using ShopWorld.Shared.Entities;
 
 namespace ShopWorldWeb.UI.Models.Profiles
@@ -7,7 +8,7 @@ namespace ShopWorldWeb.UI.Models.Profiles
     {
         public ItemProfiler()
         {
-            CreateMap<ItemModel, Item>();
+            CreateMap<ItemModel, ItemInputModel>();
             CreateMap<Item, ItemModel>();
         }
     }

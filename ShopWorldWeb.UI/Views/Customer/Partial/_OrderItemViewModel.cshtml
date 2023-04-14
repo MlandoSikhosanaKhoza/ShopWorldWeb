@@ -1,4 +1,4 @@
-﻿@model IEnumerable<UI.Models.OrderItemsViewModel>
+﻿@model IEnumerable<OrderItemsViewModel>
     
     <div class="bg-dark p-0 text-white">
         <span id="btn-close-shopping-cart" class="ml-auto" style="margin-right: 0;cursor: pointer;">&times;</span>
@@ -50,8 +50,8 @@
             R0,00
         </td>
         <td id="purchase-vat">
-            @(BusinessEntities.Enums.Tax.VAT*100)%
-            <input type="hidden" value="@BusinessEntities.Enums.Tax.VAT" id="input-vat" />
+            @(Tax.VAT*100)%
+            <input type="hidden" value="@Tax.VAT" id="input-vat" />
         </td>
         <td id="grand-total">
             R0,00

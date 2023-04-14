@@ -1,4 +1,4 @@
-﻿@model UI.Models.OrderModel
+﻿@model OrderModel
 @{
 }
 <section class="contact p-3 pt-0 bg-white">
@@ -27,7 +27,7 @@
                 </tr>
                 <tr>
                     <th>VAT</th>
-                    <td colspan="3">@(BusinessEntities.Enums.Tax.VAT*100)%</td>
+                    <td colspan="3">@(Tax.VAT*100)%</td>
                 </tr>
                 <tr>
                     <th>Subtotal</th>

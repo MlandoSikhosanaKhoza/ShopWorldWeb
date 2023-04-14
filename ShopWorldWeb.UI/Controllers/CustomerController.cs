@@ -159,9 +159,10 @@ namespace ShopWorldWeb.UI.Controllers
             return View("Reciept", orderModel);
         }
 
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
             Response.Cookies.Delete("login_token");
+            await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
     }
