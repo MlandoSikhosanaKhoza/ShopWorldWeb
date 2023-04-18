@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en-za">
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -15,10 +15,18 @@
     <script>
         $(document).ready(function () {
             $("input").attr("autocomplete", "off");
-            $.validator.methods.number = function (value, element) {
-                return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:\.\d{3})+)?(?:,\d+)?$/.test(value);
-            }
+            
         });
     </script>
+    @if ((1.2d + "").Contains(","))
+    {
+        <script>
+            $(document).ready(function(){
+                $.validator.methods.number = function (value, element) {
+                    return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:\.\d{3})+)?(?:,\d+)?$/.test(value);
+                };
+            });
+        </script>
+    }
 </body>
 </html>

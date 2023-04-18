@@ -1,7 +1,7 @@
-﻿@{
+﻿@using System.Security.Claims;
+@{
     Layout = "~/Views/Shared/_DefaultLayout.cshtml";
-    string user=Context.Request.Cookies["user"];
-    string admin=Context.Request.Cookies["admin"];
+    string username =User.IsInRole("Customer")?JwtTokenReader.GetTokenValue(Context.Request.Cookies["login_token"],ClaimTypes.Name) :"";
 }
 @section CSS{
     <meta content="" name="description">
@@ -41,28 +41,31 @@
     <div class="d-flex flex-column">
 
         <div class="profile">
-            <img src="~/image/profile/cow.png" alt="" class="img-fluid">
-            <h1 class="text-light">Good-for-moo</h1>
-            <h6 id="username-sidebar" class="text-light text-center">@ViewBag.NameSurname</h6>
+            <img src="~/image/front/shop_world_medium.png" style="border: none;" />
+            <h1 class="text-light">Shop World</h1>
+            <h6 id="username-sidebar" class="text-light text-center">@username</h6>
         </div>
 
         <nav id="navbar" class="nav-menu navbar">
             <ul>
-                @if (!string.IsNullOrEmpty(user))
-                {
-                    <li><a href="@Url.Action("Index","Customer")" class="nav-link scrollto"><i class="bx bx-home"></i> <span>Make An Order</span></a></li>
-                    <li><a href="@Url.Action("MyOrders","Customer")" class="nav-link scrollto"><i class="bx bi-cart-x"></i> <span>My Orders</span></a></li>
-                    <li><a href="@Url.Action("Logout","Customer")" class="nav-link scrollto"><i class="bx bx-user"></i> <span>Logout</span></a></li>
-                }
-
-                @if (!string.IsNullOrEmpty(admin))
+                @if (User.IsInRole("Admin"))
                 {
                     <li><a href="@Url.Action("Index","Item")" class="nav-link scrollto"><i class="bx bx-file-blank"></i> <span>Items</span></a></li>
                     <li><a href="@Url.Action("Index","Employee")" class="nav-link scrollto"><i class="bx bx-book-content"></i> <span>Employees</span></a></li>
                     <li><a href="@Url.Action("Index","OrderStats")" class="nav-link scrollto"><i class="bx bi-cart-check"></i> <span>Order Stats</span></a></li>
                     <li><a href="@Url.Action("Index","Order")" class="nav-link scrollto"><i class="bx bi-cart-fill"></i> <span>Orders</span></a></li>
                     <li><a href="@Url.Action("Logout","Employee")" class="nav-link scrollto"><i class="bx bx-user"></i> <span>Logout</span></a></li>
+                }else{
+                    <li><a href="@Url.Action("Index","Customer")" class="nav-link scrollto"><i class="bx bx-home"></i> <span>Make An Order</span></a></li>
                 }
+                
+                @if (User.IsInRole("Customer"))
+                {
+                    <li><a href="@Url.Action("MyOrders","Customer")" class="nav-link scrollto"><i class="bx bi-cart-x"></i> <span>My Orders</span></a></li>
+                    <li><a href="@Url.Action("Logout","Customer")" class="nav-link scrollto"><i class="bx bx-user"></i> <span>Logout</span></a></li>
+                }
+
+                
 
             </ul>
         </nav><!-- .nav-menu -->

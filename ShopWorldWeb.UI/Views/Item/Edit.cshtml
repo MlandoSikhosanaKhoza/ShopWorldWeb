@@ -17,7 +17,7 @@
 
             <h4>Item</h4>
             <div class="col-md-4">
-                <img id="display-image" src="~/image/item-image/@Model.ImageName" style="width: auto;max-width: 100%; max-height: 300px;" />
+                <img id="display-image" src="@(ShopWorldGlobal.Url)/images/@Model.ImageName" style="width: auto;max-width: 100%; max-height: 300px;" />
                 <input id="file-image" accept="image/*" type="file" />
                 @Html.HiddenFor(model => model.Base64)
                 @Html.HiddenFor(model => model.ItemId)
@@ -53,7 +53,7 @@
 
             <div class="form-group">
                 <div class="col-md-12">
-                    <input type="submit" value="Create" class="btn btn-primary mt-3 float-right" />
+                    <input type="submit" value="Save" class="btn btn-primary mt-3 float-right" />
                 </div>
             </div>
         }

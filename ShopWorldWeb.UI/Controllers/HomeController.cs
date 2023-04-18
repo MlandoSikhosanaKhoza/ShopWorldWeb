@@ -10,9 +10,11 @@ using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ShopWorldWeb.UI.Controllers
 {
+    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class HomeController : Controller
     {
         private ShopWorldClient _shopWorldClient;
@@ -24,27 +26,52 @@ namespace ShopWorldWeb.UI.Controllers
             _shopWorldClient = shopWorldClient;
             _mapper = mapper;
         }
-
+        [AllowAnonymous]
         public IActionResult Index()
         {
+            if (User.IsInRole("Customer"))
+            {
+                return RedirectToAction("Index", "Customer");
+            }
+            else if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index", "Item");
+            }
             return View();
         }
-
+        [AllowAnonymous]
         public IActionResult Login()
         {
+            if (User.IsInRole("Customer"))
+            {
+                return RedirectToAction("Index", "Customer");
+            }
+            else if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index", "Item");
+            }
             return View();
         }
-
+        [AllowAnonymous]
         public IActionResult SignUp()
         {
+            if (User.IsInRole("Customer"))
+            {
+                return RedirectToAction("Index", "Customer");
+            }
+            else if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index", "Item");
+            }
             return View();
         }
-
+        [AllowAnonymous]
         public IActionResult LoginAsUser()
         {
             return RedirectToAction("Index", "Customer");
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login(CustomerLoginModel CustomerLoginModel)
         {
@@ -80,7 +107,7 @@ namespace ShopWorldWeb.UI.Controllers
             Response.Cookies.Append("login_token", loginResult.JwtToken);
             return RedirectToAction("LoginAsUser");
         }
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> SignUp(CustomerModel CustomerModel)
         {
@@ -117,7 +144,7 @@ namespace ShopWorldWeb.UI.Controllers
             Response.Cookies.Append("login_token", loginResult.JwtToken);
             return RedirectToAction("LoginAsUser");
         }
-
+        [AllowAnonymous]
         public async Task<IActionResult> LoginAsAdmin()
         {
             LoginResult loginResult=await _shopWorldClient.Authorization_LoginAsAdminAsync();
@@ -152,18 +179,15 @@ namespace ShopWorldWeb.UI.Controllers
             Response.Cookies.Append("login_token", loginResult.JwtToken);
             return RedirectToAction("Index", "Item");
         }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        
+        [AllowAnonymous]
         public IActionResult Unauthorized()
         {
             Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             ViewBag.Status = (int)HttpStatusCode.Unauthorized;
             return View();
         }
-
+        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

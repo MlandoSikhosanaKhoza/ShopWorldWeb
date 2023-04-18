@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ShopWorld.Shared.Entities;
 using ShopWorldWeb.UI.Models;
 using ShopWorldWeb.UI.Services;
+using System.Data;
 
 namespace ShopWorldWeb.UI.Controllers
 {
+    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "Admin")]
     public class OrderController : Controller
     {
         private ShopWorldClient _shopWorldClient;
@@ -34,6 +38,7 @@ namespace ShopWorldWeb.UI.Controllers
             ViewBag.NameSurname = customer.Name + " " + customer.Surname;
             List<OrderItemsViewModel> orderItems = (await _shopWorldClient.OrderItem_GetOrderViewItemsAsync(order.OrderId)).Select(oiv => new OrderItemsViewModel { Description = oiv.Description, Quantity = oiv.Quantity, Price = oiv.Price }).ToList();
             OrderModel orderModel = _mapper.Map<OrderModel>(order);
+            orderModel.Customer = _mapper.Map<CustomerModel>(customer);
             orderModel.OrderItemsView = orderItems;
             ViewBag.EmployeeId = new SelectList((await _shopWorldClient.Employee_GetAllEmployeesAsync()).Select(n => new { Id = n.EmployeeId, FullName = n.Name + " " + n.Surname }), "Id", "FullName", order.EmployeeId);
             return View("Fulfill", orderModel);

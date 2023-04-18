@@ -12,7 +12,6 @@ namespace ShopWorld.Shared
         [Key]
         public int ItemId { get; set; }
         public string ImageName { get; set; }
-        [StringLength(300)]
         public string Base64 { get; set; }
         [StringLength(40)]
         public string Description { get; set; }

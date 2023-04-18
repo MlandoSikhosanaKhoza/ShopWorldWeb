@@ -1,7 +1,7 @@
 ﻿@{
-    List<CustomerOrderResult> customerOrderViews = ViewBag.CustomerNumOrdersList;
-    List<CustomerOrderPriceResult> customerOrderPriceViews = ViewBag.CustomerTotalSpentList;
-    List<CustomerOrderPriceResult> customerOrderAvgViews = ViewBag.CustomerAverageSpentList;
+    List<CustomerOrderResult> customerOrderViews = (List<CustomerOrderResult>)ViewBag.CustomerNumOrdersList;
+    List<CustomerOrderPriceResult> customerOrderPriceViews = (List<CustomerOrderPriceResult>)ViewBag.CustomerTotalSpentList;
+    List<CustomerOrderPriceResult> customerOrderAvgViews = (List<CustomerOrderPriceResult>)ViewBag.CustomerAverageSpentList;
 }
 <section class="contact p-3 pt-0 mb-3 bg-white">
     <div class="section-title">

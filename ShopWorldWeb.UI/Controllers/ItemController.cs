@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShopWorld.Shared;
 using ShopWorld.Shared.Entities;
@@ -7,14 +10,17 @@ using ShopWorldWeb.UI.Services;
 
 namespace ShopWorldWeb.UI.Controllers
 {
+    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "Admin")]
     public class ItemController : Controller
     {
         private ShopWorldClient _shopWorldClient;
         private IMapper _mapper { get; set; }
-        public ItemController(ShopWorldClient shopWorldClient)
+        public ItemController(ShopWorldClient shopWorldClient,IMapper mapper)
         {
             _shopWorldClient= shopWorldClient;
+            _mapper=mapper;
         }
+        
         public async Task<IActionResult> Index()
         {
             return View(await _shopWorldClient.Item_GetAllItemsAsync());

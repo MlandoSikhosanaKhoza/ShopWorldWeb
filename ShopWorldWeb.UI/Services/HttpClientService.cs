@@ -6,14 +6,13 @@ namespace ShopWorldWeb.UI.Services
         private HttpClient _httpClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
-        public HttpClientService(IHttpContextAccessor httpContextAccessor,IConfiguration configuration) { 
+        public HttpClientService(IHttpContextAccessor httpContextAccessor) { 
             _httpContextAccessor = httpContextAccessor;
-            _configuration = configuration;
         }
 
         public HttpClient GetShopWorldClient() {
             _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri(_configuration["API:ShopWorld"]);
+            _httpClient.BaseAddress = new Uri(ShopWorldGlobal.Url);
 
             IRequestCookieCollection cookies = _httpContextAccessor.HttpContext.Request.Cookies;
             

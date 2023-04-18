@@ -7,24 +7,21 @@
     <div class="container-fluid d-flex justify-content-between align-items-center">
 
         <div class="logo">
-            <h1 class="text-light"><a href="index.html"><span>Good-For-Moo</span></a></h1>
-            <!-- Uncomment below if you prefer to use an image logo -->
-            <!-- <a href="index.html"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+            <a href="/"><img src="~/image/front/shop_world_small.png" alt="" class="img-fluid"></a>
         </div>
 
-        @*<div class="contact-link float-right">
-                <a href="#contact" class="scrollto">Contact Us</a>
-            </div>*@
+        <div class="contact-link float-right">
+            <a href="~/Home/Index">Home</a>
+            <a href="~/Home/Login">Login</a>
+            <a href="~/Home/SignUp" class="scrollto">Sign up</a>
+        </div>
 
     </div>
 </header>
 <section id="hero">
     <div class="hero-container">
-        <h1>Good-For-Moo</h1>
-        <h2>Moo-Hoo for you too</h2>
-        <div class="countdown d-none" data-count="2023/12/3" data-template="%d days %h:%m:%s"></div>
+        <h1>Login</h1>
         <form asp-action="Login">
-            <h3 class=" text-white">Login</h3>
             <div class="form-group col-md-12">
                 <label asp-for="Mobile" class="control-label text-white"></label>
                 <input asp-for="Mobile" class="form-control customer-input col-sm-12" />
@@ -33,9 +30,7 @@
             <button class="btn btn-primary mt-3">Login</button>
         </form>
         <div class="text-center mt-3">
-            <a asp-action="Index" class="btn btn-dark">Back to Home</a>
-            <a asp-action="SignUp" class="btn btn-secondary">Sign Up</a>
-            <a asp-action="LoginAsUser" class="btn btn-secondary">Continue without Login</a>
+            <a asp-action="LoginAsUser" class="badge badge-dark">Continue without Login</a>
         </div>
     </div>
 </section>

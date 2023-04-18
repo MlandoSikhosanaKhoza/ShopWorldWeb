@@ -9,6 +9,7 @@ using ShopWorld.Shared;
 using ShopWorld.Shared.Entities;
 using ShopWorldWeb.UI.Models;
 using ShopWorldWeb.UI.Services;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -19,9 +20,10 @@ namespace ShopWorldWeb.UI.Controllers
     {
         private ShopWorldClient _shopWorldClient;
         private IMapper _mapper { get; set; }
-        public CustomerController(ShopWorldClient shopWorldClient,IMapper mapper) { 
-            _shopWorldClient= shopWorldClient;
-            _mapper=mapper;
+        public CustomerController(ShopWorldClient shopWorldClient, IMapper mapper)
+        {
+            _shopWorldClient = shopWorldClient;
+            _mapper = mapper;
         }
 
         [AllowAnonymous]
@@ -30,14 +32,21 @@ namespace ShopWorldWeb.UI.Controllers
             OrderModel orderModel = new OrderModel();
             if (User.IsInRole("Customer"))
             {
-                int CustomerId = int.Parse(JwtTokenReader.GetTokenValue(Request.Cookies["login_token"], "CustomerId"));
-                
-                orderModel.Customer = _mapper.Map<CustomerModel>(await _shopWorldClient.Customer_GetCustomerByIdAsync(CustomerId));
+                if (Request.Cookies.ContainsKey("login_token"))
+                {
+                    int CustomerId = int.Parse(JwtTokenReader.GetTokenValue(Request.Cookies["login_token"], "CustomerId"));
+
+                    orderModel.Customer = _mapper.Map<CustomerModel>(await _shopWorldClient.Customer_GetCustomerByIdAsync(CustomerId));
+                }
+                else
+                {
+                    await HttpContext.SignOutAsync();
+                }
             }
-            orderModel.Items =(List<Item>) await _shopWorldClient.Item_GetAllItemsAsync();
+            orderModel.Items = (List<Item>)await _shopWorldClient.Item_GetAllItemsAsync();
             orderModel.OrderReference = Guid.NewGuid();
             orderModel.DateCreated = DateTime.Now;
-            return View("MakeAnOrder",orderModel);
+            return View("MakeAnOrder", orderModel);
         }
 
         [AllowAnonymous]
@@ -47,31 +56,31 @@ namespace ShopWorldWeb.UI.Controllers
             {
                 return Json(true);
             }
-            return Json(await _shopWorldClient.Customer_MobileNumberExistsAsync(Mobile));
+            return Json(!await _shopWorldClient.Customer_MobileNumberExistsAsync(Mobile));
         }
 
         [AllowAnonymous]
         public async Task<IActionResult> CheckIfMobileDoesntExistAsync(string Mobile)
         {
-            return Json(!(await _shopWorldClient.Customer_MobileNumberExistsAsync(Mobile)));
+            return Json((await _shopWorldClient.Customer_MobileNumberExistsAsync(Mobile)));
         }
 
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> PurchaseItems(OrderModel OrderModel, CustomerModel CustomerModel, int[] ItemId, int[] Quantity)
         {
-            if (ModelState.IsValid)
+            Customer customer = await _shopWorldClient.Customer_ConfigureCustomerAsync(_mapper.Map<Customer>(CustomerModel));
+            ViewBag.NameSurname = customer.Name + " " + customer.Surname;
+            OrderModel.CustomerId = customer.CustomerId;
+            Order order = await _shopWorldClient.Order_AddOrderAsync(_mapper.Map<Order>(OrderModel));
+            OrderModel.Customer = CustomerModel;
+            await _shopWorldClient.OrderItem_AddOrderItemsAsync(new OrderItemInputModel { OrderId = order.OrderId, ItemId = ItemId, Quantity = Quantity });
+            OrderModel.OrderItemsView = (await _shopWorldClient.OrderItem_GetOrderViewItemsAsync(order.OrderId)).Select(oiv => new OrderItemsViewModel { Description = oiv.Description, Quantity = oiv.Quantity, Price = oiv.Price }).ToList();
+            if (!User.IsInRole("Customer"))
             {
-                Customer customer = await _shopWorldClient.Customer_ConfigureCustomerAsync(_mapper.Map<Customer>(CustomerModel));
-                ViewBag.NameSurname = customer.Name + " " + customer.Surname;
-                OrderModel.CustomerId = customer.CustomerId;
-                Order order = await _shopWorldClient.Order_AddOrderAsync(_mapper.Map<Order>(OrderModel));
-                OrderModel.Customer = CustomerModel;
-                await _shopWorldClient.OrderItem_AddOrderItemsAsync(new OrderItemInputModel { OrderId=order.OrderId, ItemId=ItemId,Quantity=Quantity });
-                OrderModel.OrderItemsView = (await _shopWorldClient.OrderItem_GetOrderViewItemsAsync(order.OrderId)).Select(oiv => new OrderItemsViewModel { Description = oiv.Description, Quantity = oiv.Quantity, Price = oiv.Price }).ToList();
-                LoginResult loginResult = await _shopWorldClient.Authorization_LoginAsync(new MobileLoginInputModel { MobileNumber=customer.Mobile });
+                LoginResult loginResult = await _shopWorldClient.Authorization_LoginAsync(new MobileLoginInputModel { MobileNumber = customer.Mobile });
                 Response.Cookies.Append("login_token", loginResult.JwtToken);
-                JwtSecurityToken jwtSecurityToken=JwtTokenReader.GetJwtToken(loginResult.JwtToken);
+                JwtSecurityToken jwtSecurityToken = JwtTokenReader.GetJwtToken(loginResult.JwtToken);
                 var authProperties = new AuthenticationProperties
                 {
                     AllowRefresh = true,
@@ -99,12 +108,11 @@ namespace ShopWorldWeb.UI.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(new ClaimsIdentity(jwtSecurityToken.Claims, CookieAuthenticationDefaults.AuthenticationScheme)),
                 authProperties);
-                return View("Reciept", OrderModel);
             }
-            return View("MakeAnOrder", OrderModel);
+            return RedirectToAction("ShowReceipt",new { id=order.OrderId });
         }
 
-        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,Roles ="Customer")]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "Customer")]
         public async Task<IActionResult> MyOrders()
         {
             int CustomerId = int.Parse(JwtTokenReader.GetTokenValue(Request.Cookies["login_token"], "CustomerId"));
@@ -147,7 +155,7 @@ namespace ShopWorldWeb.UI.Controllers
             }
             return View("MyOrders", customerHistoryModel);
         }
-
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "Customer")]
         public async Task<IActionResult> ShowReceipt(int id)
         {
             Order order = await _shopWorldClient.Order_GetOrderAsync(id);
@@ -155,6 +163,7 @@ namespace ShopWorldWeb.UI.Controllers
             ViewBag.NameSurname = customer.Name + " " + customer.Surname;
             List<OrderItemsViewModel> orderItems = (await _shopWorldClient.OrderItem_GetOrderViewItemsAsync(order.OrderId)).Select(oiv => new OrderItemsViewModel { Description = oiv.Description, Quantity = oiv.Quantity, Price = oiv.Price }).ToList();
             OrderModel orderModel = _mapper.Map<OrderModel>(order);
+            orderModel.Customer = _mapper.Map<CustomerModel>(customer);
             orderModel.OrderItemsView = orderItems;
             return View("Reciept", orderModel);
         }

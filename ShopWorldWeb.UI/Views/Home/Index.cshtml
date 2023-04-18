@@ -7,23 +7,25 @@
     <div class="container-fluid d-flex justify-content-between align-items-center">
 
         <div class="logo">
-            <h1 class="text-light"><a href="index.html"><span>Good-For-Moo</span></a></h1>
+            <a href="/"><img src="~/image/front/shop_world_small.png" alt="" class="img-fluid"></a>
             <!-- Uncomment below if you prefer to use an image logo -->
             <!-- <a href="index.html"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
         </div>
 
-        @*<div class="contact-link float-right">
-            <a href="#contact" class="scrollto">Contact Us</a>
-        </div>*@
+        <div class="contact-link float-right">
+            <a href="~/Home/Index">Home</a>
+            <a href="~/Home/Login">Login</a>
+            <a href="~/Home/SignUp" class="scrollto">Sign up</a>
+        </div>
 
     </div>
 </header><!-- End #header -->
 <!-- ======= Hero Section ======= -->
 <section id="hero">
     <div class="hero-container">
-        <h1>Good-For-Moo</h1>
-        <h2>Moo-Hoo for you too</h2>
-        <div class="countdown" data-count="2023/12/3" data-template="%d days %h:%m:%s"></div>
+        <h1>Shop World</h1>
+        <h2>Shop your world</h2>
+        <div class="countdown d-none" data-count="2023/12/3" data-template="%d days %h:%m:%s"></div>
 
             <div class="text-center">
                 <a asp-action="Login" class="btn btn-primary">Login as User</a>

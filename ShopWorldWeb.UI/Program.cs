@@ -14,6 +14,7 @@ builder.Services.AddSingleton<ShopWorldClient>();
 builder.Services.AddAutoMapper(typeof(CustomerProfiler));
 builder.Services.AddAutoMapper(typeof(ItemProfiler));
 builder.Services.AddAutoMapper(typeof(OrderProfiler));
+builder.Services.AddAutoMapper(typeof(EmployeeProfile));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

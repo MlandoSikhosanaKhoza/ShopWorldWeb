@@ -1,16 +1,23 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShopWorld.Shared.Entities;
+using ShopWorldWeb.UI.Models;
 using ShopWorldWeb.UI.Services;
 
 namespace ShopWorldWeb.UI.Controllers
 {
+    [Authorize(AuthenticationSchemes=CookieAuthenticationDefaults.AuthenticationScheme,Roles ="Admin")]
     public class EmployeeController : Controller
     {
         private readonly ShopWorldClient _shopWorldClient;
-        public EmployeeController(ShopWorldClient shopWorldClient)
+        private readonly IMapper _mapper;
+        public EmployeeController(ShopWorldClient shopWorldClient,IMapper mapper)
         {
             _shopWorldClient = shopWorldClient;
+            _mapper = mapper;
         }
         public async Task<IActionResult> Index()
         {
@@ -43,11 +50,11 @@ namespace ShopWorldWeb.UI.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Employee employee)
+        public async Task<IActionResult> Create(EmployeeModel employee)
         {
             if (ModelState.IsValid)
             {
-                await _shopWorldClient.Employee_AddEmployeeAsync(employee);
+                await _shopWorldClient.Employee_AddEmployeeAsync(_mapper.Map<Employee>(employee));
                 return RedirectToAction("Index");
             }
 
@@ -74,11 +81,11 @@ namespace ShopWorldWeb.UI.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Employee employee)
+        public async Task<IActionResult> Edit(EmployeeModel employee)
         {
             if (ModelState.IsValid)
             {
-                await _shopWorldClient.Employee_UpdateEmployeeAsync(employee);
+                await _shopWorldClient.Employee_UpdateEmployeeAsync(_mapper.Map<Employee>(employee));
                 return RedirectToAction("Index");
             }
             return View(employee);
