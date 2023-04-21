@@ -34,6 +34,11 @@ namespace ShopWorldWeb.UI.Services
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
         }
 
+        public HttpClient GetHttpClient()
+        {
+            return _httpClient;
+        }
+
         private Newtonsoft.Json.JsonSerializerSettings CreateSerializerSettings()
         {
             var settings = new Newtonsoft.Json.JsonSerializerSettings();

@@ -19,7 +19,7 @@ namespace ShopWorldWeb.UI.Services
             if (cookies!=null && cookies.ContainsKey("login_token"))
             {
                 string jwt = cookies["login_token"];
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bear", jwt);
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
             }
 
             return _httpClient;

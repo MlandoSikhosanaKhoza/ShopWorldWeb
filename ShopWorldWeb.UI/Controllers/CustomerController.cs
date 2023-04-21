@@ -72,14 +72,12 @@ namespace ShopWorldWeb.UI.Controllers
             Customer customer = await _shopWorldClient.Customer_ConfigureCustomerAsync(_mapper.Map<Customer>(CustomerModel));
             ViewBag.NameSurname = customer.Name + " " + customer.Surname;
             OrderModel.CustomerId = customer.CustomerId;
-            Order order = await _shopWorldClient.Order_AddOrderAsync(_mapper.Map<Order>(OrderModel));
-            OrderModel.Customer = CustomerModel;
-            await _shopWorldClient.OrderItem_AddOrderItemsAsync(new OrderItemInputModel { OrderId = order.OrderId, ItemId = ItemId, Quantity = Quantity });
-            OrderModel.OrderItemsView = (await _shopWorldClient.OrderItem_GetOrderViewItemsAsync(order.OrderId)).Select(oiv => new OrderItemsViewModel { Description = oiv.Description, Quantity = oiv.Quantity, Price = oiv.Price }).ToList();
+           
             if (!User.IsInRole("Customer"))
             {
                 LoginResult loginResult = await _shopWorldClient.Authorization_LoginAsync(new MobileLoginInputModel { MobileNumber = customer.Mobile });
                 Response.Cookies.Append("login_token", loginResult.JwtToken);
+                _shopWorldClient.GetHttpClient().DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginResult.JwtToken);
                 JwtSecurityToken jwtSecurityToken = JwtTokenReader.GetJwtToken(loginResult.JwtToken);
                 var authProperties = new AuthenticationProperties
                 {
@@ -109,6 +107,10 @@ namespace ShopWorldWeb.UI.Controllers
                 new ClaimsPrincipal(new ClaimsIdentity(jwtSecurityToken.Claims, CookieAuthenticationDefaults.AuthenticationScheme)),
                 authProperties);
             }
+            Order order = await _shopWorldClient.Order_AddOrderAsync(_mapper.Map<Order>(OrderModel));
+            await _shopWorldClient.OrderItem_AddOrderItemsAsync(new OrderItemInputModel { OrderId = order.OrderId, ItemId = ItemId, Quantity = Quantity });
+            OrderModel.OrderItemsView = (await _shopWorldClient.OrderItem_GetOrderViewItemsAsync(order.OrderId)).Select(oiv => new OrderItemsViewModel { Description = oiv.Description, Quantity = oiv.Quantity, Price = oiv.Price }).ToList();
+            
             return RedirectToAction("ShowReceipt",new { id=order.OrderId });
         }
 

@@ -10,7 +10,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<HttpClientService>();
-builder.Services.AddSingleton<ShopWorldClient>();
+builder.Services.AddScoped<ShopWorldClient>();
 builder.Services.AddAutoMapper(typeof(CustomerProfiler));
 builder.Services.AddAutoMapper(typeof(ItemProfiler));
 builder.Services.AddAutoMapper(typeof(OrderProfiler));
