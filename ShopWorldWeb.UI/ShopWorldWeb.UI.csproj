@@ -20,8 +20,4 @@
     <ProjectReference Include="..\ShopWorld.Shared\ShopWorld.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Security\" />
-  </ItemGroup>
-
 </Project>
