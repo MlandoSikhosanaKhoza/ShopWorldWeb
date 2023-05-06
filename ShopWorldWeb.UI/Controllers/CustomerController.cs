@@ -32,9 +32,10 @@ namespace ShopWorldWeb.UI.Controllers
             OrderModel orderModel = new OrderModel();
             if (User.IsInRole("Customer"))
             {
-                if (Request.Cookies.ContainsKey("login_token"))
+                
+                if (User.Claims.Any(c=>c.Type=="CustomerId"))
                 {
-                    int CustomerId = int.Parse(JwtTokenReader.GetTokenValue(Request.Cookies["login_token"], "CustomerId"));
+                    int CustomerId = int.Parse(User.Claims.First(c=>c.Type=="CustomerId").Value);
 
                     orderModel.Customer = _mapper.Map<CustomerModel>(await _shopWorldClient.Customer_GetCustomerByIdAsync(CustomerId));
                 }
@@ -76,7 +77,6 @@ namespace ShopWorldWeb.UI.Controllers
             if (!User.IsInRole("Customer"))
             {
                 LoginResult loginResult = await _shopWorldClient.Authorization_LoginAsync(new MobileLoginInputModel { MobileNumber = customer.Mobile });
-                Response.Cookies.Append("login_token", loginResult.JwtToken);
                 _shopWorldClient.GetHttpClient().DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginResult.JwtToken);
                 JwtSecurityToken jwtSecurityToken = JwtTokenReader.GetJwtToken(loginResult.JwtToken);
                 var authProperties = new AuthenticationProperties
@@ -84,7 +84,7 @@ namespace ShopWorldWeb.UI.Controllers
                     AllowRefresh = true,
                     // Refreshing the authentication session should be allowed.
 
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7),
+                    ExpiresUtc = DateTime.UtcNow.AddDays(7),
                     // The time at which the authentication ticket expires. A 
                     // value set here overrides the ExpireTimeSpan option of 
                     // CookieAuthenticationOptions set with AddCookie.
@@ -102,9 +102,12 @@ namespace ShopWorldWeb.UI.Controllers
                     // The full path or absolute URI to be used as an http 
                     // redirect response value.
                 };
+                List<Claim> claims = new List<Claim>();
+                claims.AddRange(jwtSecurityToken.Claims);
+                claims.Add(new Claim("login_token", loginResult.JwtToken));
                 await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(new ClaimsIdentity(jwtSecurityToken.Claims, CookieAuthenticationDefaults.AuthenticationScheme)),
+                new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
                 authProperties);
             }
             Order order = await _shopWorldClient.Order_AddOrderAsync(_mapper.Map<Order>(OrderModel));
@@ -117,7 +120,7 @@ namespace ShopWorldWeb.UI.Controllers
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "Customer")]
         public async Task<IActionResult> MyOrders()
         {
-            int CustomerId = int.Parse(JwtTokenReader.GetTokenValue(Request.Cookies["login_token"], "CustomerId"));
+            int CustomerId = int.Parse(User.FindFirstValue("CustomerId"));
             Customer customer = await _shopWorldClient.Customer_GetCustomerByIdAsync(CustomerId);
             CustomerModel customerModel = new CustomerModel();
             CustomerHistoryModel customerHistoryModel = new CustomerHistoryModel();
@@ -172,7 +175,6 @@ namespace ShopWorldWeb.UI.Controllers
 
         public async Task<IActionResult> Logout()
         {
-            Response.Cookies.Delete("login_token");
             await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }

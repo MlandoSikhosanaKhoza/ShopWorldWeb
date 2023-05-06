@@ -1,7 +1,7 @@
 ﻿@using System.Security.Claims;
 @{
     Layout = "~/Views/Shared/_DefaultLayout.cshtml";
-    string username =User.IsInRole("Customer")?JwtTokenReader.GetTokenValue(Context.Request.Cookies["login_token"],ClaimTypes.Name) :"";
+    string username =User.IsInRole("Customer")?User.FindFirst(ClaimTypes.Name).Value :"";
 }
 @section CSS{
     <meta content="" name="description">

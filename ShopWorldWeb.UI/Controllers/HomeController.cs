@@ -100,11 +100,13 @@ namespace ShopWorldWeb.UI.Controllers
                 // The full path or absolute URI to be used as an http 
                 // redirect response value.
             };
+            List<Claim> claims = new List<Claim>();
+            claims.AddRange(jwtSecurityToken.Claims);
+            claims.Add(new Claim("login_token", loginResult.JwtToken));
             await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(new ClaimsIdentity(jwtSecurityToken.Claims, CookieAuthenticationDefaults.AuthenticationScheme)),
+            new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
             authProperties);
-            Response.Cookies.Append("login_token", loginResult.JwtToken);
             return RedirectToAction("LoginAsUser");
         }
         [AllowAnonymous]
@@ -137,11 +139,13 @@ namespace ShopWorldWeb.UI.Controllers
                 // The full path or absolute URI to be used as an http 
                 // redirect response value.
             };
+            List<Claim> claims = new List<Claim>();
+            claims.AddRange(jwtSecurityToken.Claims);
+            claims.Add(new Claim("login_token", loginResult.JwtToken));
             await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(new ClaimsIdentity(jwtSecurityToken.Claims, CookieAuthenticationDefaults.AuthenticationScheme)),
+            new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
             authProperties);
-            Response.Cookies.Append("login_token", loginResult.JwtToken);
             return RedirectToAction("LoginAsUser");
         }
         [AllowAnonymous]
@@ -172,11 +176,13 @@ namespace ShopWorldWeb.UI.Controllers
                 // The full path or absolute URI to be used as an http 
                 // redirect response value.
             };
+            List<Claim> claims = new List<Claim>();
+            claims.AddRange(jwtSecurityToken.Claims);
+            claims.Add(new Claim("login_token", loginResult.JwtToken));
             await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(new ClaimsIdentity(jwtSecurityToken.Claims, CookieAuthenticationDefaults.AuthenticationScheme)),
+            new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
             authProperties);
-            Response.Cookies.Append("login_token", loginResult.JwtToken);
             return RedirectToAction("Index", "Item");
         }
         
