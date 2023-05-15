@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShopWorld.Shared.Entities;
 using ShopWorldWeb.UI.Models;
+using ShopWorldWeb.UI.Security;
 using ShopWorldWeb.UI.Services;
+using System.Data;
 
 namespace ShopWorldWeb.UI.Controllers
 {
-    [Authorize(AuthenticationSchemes=CookieAuthenticationDefaults.AuthenticationScheme,Roles ="Admin")]
+    [CustomAuthorization(Roles ="Admin")]
     public class EmployeeController : Controller
     {
         private readonly ShopWorldClient _shopWorldClient;
@@ -118,7 +120,6 @@ namespace ShopWorldWeb.UI.Controllers
         public async Task<IActionResult> Logout()
         {
             Response.Cookies.Delete("login_token");
-            await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
         protected override void Dispose(bool disposing)

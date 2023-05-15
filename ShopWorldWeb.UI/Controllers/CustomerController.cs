@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using ShopWorld.Shared;
 using ShopWorld.Shared.Entities;
 using ShopWorldWeb.UI.Models;
+using ShopWorldWeb.UI.Security;
 using ShopWorldWeb.UI.Services;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,7 +16,7 @@ using System.Security.Claims;
 
 namespace ShopWorldWeb.UI.Controllers
 {
-    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+    [CustomAuthorization]
     public class CustomerController : Controller
     {
         private ShopWorldClient _shopWorldClient;
@@ -102,13 +103,7 @@ namespace ShopWorldWeb.UI.Controllers
                     // The full path or absolute URI to be used as an http 
                     // redirect response value.
                 };
-                List<Claim> claims = new List<Claim>();
-                claims.AddRange(jwtSecurityToken.Claims);
-                claims.Add(new Claim("login_token", loginResult.JwtToken));
-                await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
-                authProperties);
+                HttpContext.Response.Cookies.Append("login_token", loginResult.JwtToken, new CookieOptions { Secure = true, Expires = jwtSecurityToken.ValidTo, IsEssential=true});
             }
             Order order = await _shopWorldClient.Order_AddOrderAsync(_mapper.Map<Order>(OrderModel));
             await _shopWorldClient.OrderItem_AddOrderItemsAsync(new OrderItemInputModel { OrderId = order.OrderId, ItemId = ItemId, Quantity = Quantity });
@@ -117,7 +112,7 @@ namespace ShopWorldWeb.UI.Controllers
             return RedirectToAction("ShowReceipt",new { id=order.OrderId });
         }
 
-        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "Customer")]
+        [CustomAuthorization(Roles = "Customer")]
         public async Task<IActionResult> MyOrders()
         {
             int CustomerId = int.Parse(User.FindFirstValue("CustomerId"));
@@ -140,7 +135,7 @@ namespace ShopWorldWeb.UI.Controllers
             return View("MyOrders", customerHistoryModel);
         }
 
-        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "Customer")]
+        [CustomAuthorization( Roles = "Customer")]
         [HttpPost]
         public async Task<IActionResult> MyOrders(CustomerModel CustomerModel)
         {
@@ -160,7 +155,7 @@ namespace ShopWorldWeb.UI.Controllers
             }
             return View("MyOrders", customerHistoryModel);
         }
-        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "Customer")]
+        [CustomAuthorization(Roles = "Customer")]
         public async Task<IActionResult> ShowReceipt(int id)
         {
             Order order = await _shopWorldClient.Order_GetOrderAsync(id);
@@ -175,7 +170,7 @@ namespace ShopWorldWeb.UI.Controllers
 
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
+            HttpContext.Response.Cookies.Delete("login_token");
             return RedirectToAction("Index", "Home");
         }
     }

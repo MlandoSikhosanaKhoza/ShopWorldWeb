@@ -11,10 +11,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using ShopWorldWeb.UI.Security;
 
 namespace ShopWorldWeb.UI.Controllers
 {
-    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+    [CustomAuthorization]
     public class HomeController : Controller
     {
         private ShopWorldClient _shopWorldClient;
@@ -100,13 +101,7 @@ namespace ShopWorldWeb.UI.Controllers
                 // The full path or absolute URI to be used as an http 
                 // redirect response value.
             };
-            List<Claim> claims = new List<Claim>();
-            claims.AddRange(jwtSecurityToken.Claims);
-            claims.Add(new Claim("login_token", loginResult.JwtToken));
-            await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
-            authProperties);
+            HttpContext.Response.Cookies.Append("login_token", loginResult.JwtToken, new CookieOptions { Secure = true, Expires = jwtSecurityToken.ValidTo, IsEssential = true });
             return RedirectToAction("LoginAsUser");
         }
         [AllowAnonymous]
@@ -139,13 +134,7 @@ namespace ShopWorldWeb.UI.Controllers
                 // The full path or absolute URI to be used as an http 
                 // redirect response value.
             };
-            List<Claim> claims = new List<Claim>();
-            claims.AddRange(jwtSecurityToken.Claims);
-            claims.Add(new Claim("login_token", loginResult.JwtToken));
-            await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
-            authProperties);
+            HttpContext.Response.Cookies.Append("login_token", loginResult.JwtToken, new CookieOptions { Secure = true, Expires = jwtSecurityToken.ValidTo, IsEssential = true });
             return RedirectToAction("LoginAsUser");
         }
         [AllowAnonymous]
@@ -176,13 +165,12 @@ namespace ShopWorldWeb.UI.Controllers
                 // The full path or absolute URI to be used as an http 
                 // redirect response value.
             };
-            List<Claim> claims = new List<Claim>();
-            claims.AddRange(jwtSecurityToken.Claims);
-            claims.Add(new Claim("login_token", loginResult.JwtToken));
-            await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
-            authProperties);
+            HttpContext.Response.Cookies.Append("login_token", 
+                loginResult.JwtToken, new CookieOptions { 
+                    Secure = true, 
+                    Expires = jwtSecurityToken.ValidTo, 
+                    IsEssential = true 
+                });
             return RedirectToAction("Index", "Item");
         }
         

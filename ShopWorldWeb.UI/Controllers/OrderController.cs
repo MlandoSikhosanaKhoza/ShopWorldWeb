@@ -5,12 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ShopWorld.Shared.Entities;
 using ShopWorldWeb.UI.Models;
+using ShopWorldWeb.UI.Security;
 using ShopWorldWeb.UI.Services;
 using System.Data;
 
 namespace ShopWorldWeb.UI.Controllers
 {
-    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "Admin")]
+    [CustomAuthorization(Roles = "Admin")]
     public class OrderController : Controller
     {
         private ShopWorldClient _shopWorldClient;

@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ShopWorldWeb.UI.Security;
 using ShopWorldWeb.UI.Services;
+using System.Data;
 
 namespace ShopWorldWeb.UI.Controllers
 {
-    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,Roles ="Admin")]
+    [CustomAuthorization(Roles ="Admin")]
     public class OrderStatsController : Controller
     {
         private ShopWorldClient _shopWorldClient;
