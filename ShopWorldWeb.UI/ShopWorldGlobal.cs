@@ -2,6 +2,6 @@
 {
     public static class ShopWorldGlobal
     {
-        public const string Url = "https://localhost:7176/";
+        public static string Url { get; set; }
     }
 }

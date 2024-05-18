@@ -16,7 +16,7 @@ namespace ShopWorldWeb.UI.Services
 
         public HttpClient GetShopWorldClient() {
             _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri(_configuration.GetValue<string>(""));
+            _httpClient.BaseAddress = new Uri(_configuration.GetValue<string>("Settings:ApiUrl"));
             Claim login_token = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "login_token");
 
 

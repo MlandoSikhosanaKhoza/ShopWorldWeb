@@ -12,7 +12,7 @@ namespace ShopWorldWeb.UI.Controllers
         [AllowAnonymous]
         public IActionResult Login()
         {
-            ViewBag.UserString=User.FindFirstValue(ClaimTypes.Role);
+            ViewBag.UserString = User.FindFirstValue(ClaimTypes.Role);
             return View();
         }
     }

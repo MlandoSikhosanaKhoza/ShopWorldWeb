@@ -24,7 +24,7 @@ namespace ShopWorldWeb.UI.Controllers
         public CustomerController(ShopWorldClient shopWorldClient, IMapper mapper)
         {
             _shopWorldClient = shopWorldClient;
-            _mapper = mapper;
+            _mapper          = mapper;
         }
 
         [AllowAnonymous]
@@ -45,9 +45,9 @@ namespace ShopWorldWeb.UI.Controllers
                     await HttpContext.SignOutAsync();
                 }
             }
-            orderModel.Items = (List<Item>)await _shopWorldClient.Item_GetAllItemsAsync();
+            orderModel.Items          = (List<Item>)await _shopWorldClient.Item_GetAllItemsAsync();
             orderModel.OrderReference = Guid.NewGuid();
-            orderModel.DateCreated = DateTime.Now;
+            orderModel.DateCreated    = DateTime.Now;
             return View("MakeAnOrder", orderModel);
         }
 
@@ -71,8 +71,8 @@ namespace ShopWorldWeb.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> PurchaseItems(OrderModel OrderModel, CustomerModel CustomerModel, int[] ItemId, int[] Quantity)
         {
-            Customer customer = await _shopWorldClient.Customer_ConfigureCustomerAsync(_mapper.Map<Customer>(CustomerModel));
-            ViewBag.NameSurname = customer.Name + " " + customer.Surname;
+            Customer customer     = await _shopWorldClient.Customer_ConfigureCustomerAsync(_mapper.Map<Customer>(CustomerModel));
+            ViewBag.NameSurname   = customer.Name + " " + customer.Surname;
             OrderModel.CustomerId = customer.CustomerId;
            
             if (!User.IsInRole("Customer"))
@@ -115,21 +115,22 @@ namespace ShopWorldWeb.UI.Controllers
         [CustomAuthorization(Roles = "Customer")]
         public async Task<IActionResult> MyOrders()
         {
-            int CustomerId = int.Parse(User.FindFirstValue("CustomerId"));
-            Customer customer = await _shopWorldClient.Customer_GetCustomerByIdAsync(CustomerId);
-            CustomerModel customerModel = new CustomerModel();
+            int CustomerId                            = int.Parse(User.FindFirstValue("CustomerId"));
+            Customer customer                         = await _shopWorldClient.Customer_GetCustomerByIdAsync(CustomerId);
+            CustomerModel customerModel               = new CustomerModel();
             CustomerHistoryModel customerHistoryModel = new CustomerHistoryModel();
+
             if (customer != null)
             {
-                ViewBag.NameSurname = customer.Name + " " + customer.Surname;
-                customerModel = _mapper.Map<CustomerModel>(customer);
-                customerHistoryModel = new CustomerHistoryModel { CustomerId = customer.CustomerId, Name = customerModel.Name, Surname = customerModel.Surname, Mobile = customerModel.Mobile };
-                customerHistoryModel.OngoingOrders = (List<Order>)await _shopWorldClient.Order_GetOngoingOrdersForCustomerAsync(customer.CustomerId);
+                ViewBag.NameSurname                 = customer.Name + " " + customer.Surname;
+                customerModel                       = _mapper.Map<CustomerModel>(customer);
+                customerHistoryModel                = new CustomerHistoryModel { CustomerId = customer.CustomerId, Name = customerModel.Name, Surname = customerModel.Surname, Mobile = customerModel.Mobile };
+                customerHistoryModel.OngoingOrders  = (List<Order>)await _shopWorldClient.Order_GetOngoingOrdersForCustomerAsync(customer.CustomerId);
                 customerHistoryModel.CompleteOrders = (List<Order>)await _shopWorldClient.Order_GetCompleteOrdersForCustomerAsync(customer.CustomerId);
             }
             else
             {
-                customerHistoryModel.OngoingOrders = new List<Order>();
+                customerHistoryModel.OngoingOrders  = new List<Order>();
                 customerHistoryModel.CompleteOrders = new List<Order>();
             }
             return View("MyOrders", customerHistoryModel);
@@ -143,9 +144,9 @@ namespace ShopWorldWeb.UI.Controllers
             CustomerHistoryModel customerHistoryModel = new CustomerHistoryModel();
             if (customer != null)
             {
-                CustomerModel = _mapper.Map<CustomerModel>(customer);
-                customerHistoryModel = new CustomerHistoryModel { Name = CustomerModel.Name, Surname = CustomerModel.Surname, Mobile = CustomerModel.Mobile };
-                customerHistoryModel.OngoingOrders = (List<Order>)await _shopWorldClient.Order_GetOngoingOrdersForCustomerAsync(customer.CustomerId);
+                CustomerModel                       = _mapper.Map<CustomerModel>(customer);
+                customerHistoryModel                = new CustomerHistoryModel { Name = CustomerModel.Name, Surname = CustomerModel.Surname, Mobile = CustomerModel.Mobile };
+                customerHistoryModel.OngoingOrders  = (List<Order>)await _shopWorldClient.Order_GetOngoingOrdersForCustomerAsync(customer.CustomerId);
                 customerHistoryModel.CompleteOrders = (List<Order>)await _shopWorldClient.Order_GetCompleteOrdersForCustomerAsync(customer.CustomerId);
             }
             else
@@ -158,13 +159,17 @@ namespace ShopWorldWeb.UI.Controllers
         [CustomAuthorization(Roles = "Customer")]
         public async Task<IActionResult> ShowReceipt(int id)
         {
-            Order order = await _shopWorldClient.Order_GetOrderAsync(id);
-            Customer customer = await _shopWorldClient.Customer_GetCustomerByIdAsync(order.CustomerId);
-            ViewBag.NameSurname = customer.Name + " " + customer.Surname;
+            //Get Order and Customer
+            Order order                          = await _shopWorldClient.Order_GetOrderAsync(id);
+            Customer customer                    = await _shopWorldClient.Customer_GetCustomerByIdAsync(order.CustomerId);
+            //Display Customer Order Details
+            ViewBag.NameSurname                  = customer.Name + " " + customer.Surname;
             List<OrderItemsViewModel> orderItems = (await _shopWorldClient.OrderItem_GetOrderViewItemsAsync(order.OrderId)).Select(oiv => new OrderItemsViewModel { Description = oiv.Description, Quantity = oiv.Quantity, Price = oiv.Price }).ToList();
-            OrderModel orderModel = _mapper.Map<OrderModel>(order);
-            orderModel.Customer = _mapper.Map<CustomerModel>(customer);
-            orderModel.OrderItemsView = orderItems;
+            //
+            OrderModel orderModel                = _mapper.Map<OrderModel>(order);
+            orderModel.Customer                  = _mapper.Map<CustomerModel>(customer);
+            orderModel.OrderItemsView            = orderItems;
+
             return View("Reciept", orderModel);
         }
 

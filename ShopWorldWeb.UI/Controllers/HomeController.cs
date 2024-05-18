@@ -23,9 +23,9 @@ namespace ShopWorldWeb.UI.Controllers
         private IMapper _mapper { get; set; }
         public HomeController(ILogger<HomeController> logger,ShopWorldClient shopWorldClient,IMapper mapper)
         {
-            _logger = logger;
+            _logger          = logger;
             _shopWorldClient = shopWorldClient;
-            _mapper = mapper;
+            _mapper          = mapper;
         }
         [AllowAnonymous]
         public IActionResult Index()

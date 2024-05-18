@@ -19,7 +19,7 @@ namespace ShopWorldWeb.UI.Controllers
         public EmployeeController(ShopWorldClient shopWorldClient,IMapper mapper)
         {
             _shopWorldClient = shopWorldClient;
-            _mapper = mapper;
+            _mapper          = mapper;
         }
         public async Task<IActionResult> Index()
         {

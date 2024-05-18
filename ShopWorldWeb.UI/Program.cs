@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using ShopWorldWeb.UI;
 using ShopWorldWeb.UI.Models.Profiles;
 using ShopWorldWeb.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
+ShopWorldGlobal.Url = builder.Configuration.GetValue<string>("Settings:ApiUrl") ?? "";
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<HttpClientService>();
 builder.Services.AddScoped<ShopWorldClient>();

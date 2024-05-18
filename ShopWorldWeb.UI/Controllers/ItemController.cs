@@ -19,8 +19,8 @@ namespace ShopWorldWeb.UI.Controllers
         private IMapper _mapper { get; set; }
         public ItemController(ShopWorldClient shopWorldClient,IMapper mapper)
         {
-            _shopWorldClient= shopWorldClient;
-            _mapper=mapper;
+            _shopWorldClient = shopWorldClient;
+            _mapper          = mapper;
         }
         
         public async Task<IActionResult> Index()

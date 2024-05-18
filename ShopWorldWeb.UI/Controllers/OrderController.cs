@@ -23,7 +23,7 @@ namespace ShopWorldWeb.UI.Controllers
         }
         public async  Task<IActionResult> Index()
         {
-            ViewBag.OngoingOrders =await _shopWorldClient.Order_GetOngoingOrdersAsync();
+            ViewBag.OngoingOrders  = await _shopWorldClient.Order_GetOngoingOrdersAsync();
             ViewBag.CompleteOrders = await _shopWorldClient.Order_GetCompleteOrdersAsync();
             return View("Index");
         }
@@ -34,21 +34,21 @@ namespace ShopWorldWeb.UI.Controllers
             {
                 return BadRequest();
             }
-            Order order = await _shopWorldClient.Order_GetOrderAsync((int)id);
-            Customer customer = await _shopWorldClient.Customer_GetCustomerByIdAsync(order.CustomerId);
-            ViewBag.NameSurname = customer.Name + " " + customer.Surname;
+            Order order                          = await _shopWorldClient.Order_GetOrderAsync((int)id);
+            Customer customer                    = await _shopWorldClient.Customer_GetCustomerByIdAsync(order.CustomerId);
+            ViewBag.NameSurname                  = customer.Name + " " + customer.Surname;
             List<OrderItemsViewModel> orderItems = (await _shopWorldClient.OrderItem_GetOrderViewItemsAsync(order.OrderId)).Select(oiv => new OrderItemsViewModel { Description = oiv.Description, Quantity = oiv.Quantity, Price = oiv.Price }).ToList();
-            OrderModel orderModel = _mapper.Map<OrderModel>(order);
-            orderModel.Customer = _mapper.Map<CustomerModel>(customer);
-            orderModel.OrderItemsView = orderItems;
-            ViewBag.EmployeeId = new SelectList((await _shopWorldClient.Employee_GetAllEmployeesAsync()).Select(n => new { Id = n.EmployeeId, FullName = n.Name + " " + n.Surname }), "Id", "FullName", order.EmployeeId);
+            OrderModel orderModel                = _mapper.Map<OrderModel>(order);
+            orderModel.Customer                  = _mapper.Map<CustomerModel>(customer);
+            orderModel.OrderItemsView            = orderItems;
+            ViewBag.EmployeeId                   = new SelectList((await _shopWorldClient.Employee_GetAllEmployeesAsync()).Select(n => new { Id = n.EmployeeId, FullName = n.Name + " " + n.Surname }), "Id", "FullName", order.EmployeeId);
             return View("Fulfill", orderModel);
         }
         [HttpPost]
         public async Task<IActionResult> FulfillOrder(int OrderId, int EmployeeId)
         {
-            Order order = await _shopWorldClient.Order_GetOrderAsync(OrderId);
-            order.EmployeeId = EmployeeId;
+            Order order         = await _shopWorldClient.Order_GetOrderAsync(OrderId);
+            order.EmployeeId    = EmployeeId;
             order.DateFulfilled = DateTime.Now;
             await _shopWorldClient.Order_UpdateOrderAsync(order);
             return RedirectToAction("Index");
