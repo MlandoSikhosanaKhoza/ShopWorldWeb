@@ -8,13 +8,15 @@ namespace ShopWorldWeb.UI.Services
         private HttpClient _httpClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
-        public HttpClientService(IHttpContextAccessor httpContextAccessor) { 
+        public HttpClientService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        {
             _httpContextAccessor = httpContextAccessor;
+            _configuration       = configuration;
         }
 
         public HttpClient GetShopWorldClient() {
             _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri(ShopWorldGlobal.Url);
+            _httpClient.BaseAddress = new Uri(_configuration.GetValue<string>(""));
             Claim login_token = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "login_token");
 
 

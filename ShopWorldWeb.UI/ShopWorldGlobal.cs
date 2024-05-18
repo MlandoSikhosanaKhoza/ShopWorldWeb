@@ -2,6 +2,6 @@
 {
     public static class ShopWorldGlobal
     {
-        public const string Url = "https://shopworldapi.vamisa.co.za/";
+        public const string Url = "https://localhost:7176/";
     }
 }
